@@ -4,10 +4,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-
+import jakarta.mail.internet.MimeMessage;
 @Component
 @RequiredArgsConstructor
 public class EmailHelper {
