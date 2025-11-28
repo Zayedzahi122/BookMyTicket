@@ -19,7 +19,7 @@ public class UserController {
 
 	private final UserService userService;
 
-@GetMapping("/")
+@GetMapping({"/","/main"})
 public String loadMain() {
 return "main.html";
 }
@@ -42,5 +42,9 @@ return "main.html";
 	@PostMapping("/login")
 	public String login(LoginDto dto,RedirectAttributes attributes,HttpSession session) {
 		return userService.login(dto,attributes,session);
+	}
+	@GetMapping("/logout")
+	public String logout(HttpSession session,RedirectAttributes attributes) {
+		return userService.logout(session,attributes);
 	}
 }
