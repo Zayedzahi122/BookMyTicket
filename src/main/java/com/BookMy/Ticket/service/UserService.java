@@ -1,13 +1,15 @@
 package com.BookMy.Ticket.service;
 
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.BookMy.Ticket.dto.LoginDto;
+import com.BookMy.Ticket.dto.PasswordDto;
 import com.BookMy.Ticket.dto.UserDto;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+
 
 public interface UserService {
 	
@@ -20,6 +22,13 @@ public interface UserService {
 	String logout(HttpSession session, RedirectAttributes attributes);
 
 	String submitOtp(int otp, String email, RedirectAttributes attributes);
+
+	String resendOtp(String email, RedirectAttributes attributes);
+
+	String forgotPassword(String email, RedirectAttributes attributes);
+
+	String resetPassword( PasswordDto passwordDto, BindingResult result, RedirectAttributes attributes,
+			ModelMap map);
 
 	
 }

@@ -28,6 +28,7 @@ public class EmailHelper {
 		mailSender.send(mimeMessage);
 		}catch (Exception e) {
 			System.err.println("Failed to Send OTP : "+otp);	
+			
 		}
 	}
 
