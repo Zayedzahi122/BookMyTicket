@@ -61,4 +61,14 @@ public class AES {
 		return null;
 	}
 
+	public static void encrypt(String password, String string, boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static String encrypt(String password, String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
