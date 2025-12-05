@@ -1,5 +1,8 @@
 package com.BookMy.Ticket.controller;
+import java.io.IOException;
+
 import org.springframework.stereotype.Controller;
+import com.BookMy.Ticket.dto.TheaterDto;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,20 +84,36 @@ return "main.html";
 	}
 
 	@PostMapping("/reset-password")
-	public String resetPassword(@Valid PasswordDto passwordDto,BindingResult result,ModelMap map, RedirectAttributes attributes) {
-		return userService.resetPassword(passwordDto,result, attributes,map);
+	public String resetPassword(@Valid PasswordDto passwordDto, BindingResult result, ModelMap map,
+			RedirectAttributes attributes) {
+		return userService.resetPassword(passwordDto, result, attributes, map);
 	}
 	@GetMapping("/manage-users")
-	public String viewUsers(HttpSession session,RedirectAttributes attributes,ModelMap map) {
-		return userService.manageUsers(session,attributes,map);
+	public String viewUsers(HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		return userService.manageUsers(session, attributes, map);
 	}
 	
 	@GetMapping("/block/{id}")
-	public String block(@PathVariable Long id,HttpSession session,RedirectAttributes attributes) {
-		return userService.blockUser(id,session,attributes);
+	public String block(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
+		return userService.blockUser(id, session, attributes);
 	}
 	@GetMapping("/un-block/{id}")
-	public String unBlock(@PathVariable Long id,HttpSession session,RedirectAttributes attributes) {
-		return userService.unBlockUser(id,session,attributes);
+	public String unBlock(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
+		return userService.unBlockUser(id, session, attributes);
+	}
+
+	@GetMapping("/manage-theaters")
+	public String manageTheater(ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		return userService.manageTheater(map, attributes, session);
+	}
+
+	@GetMapping("/add-theater")
+	public String addTheater(TheaterDto theaterDto, RedirectAttributes attributes, HttpSession session) {
+		return userService.loadAddTheater(session, attributes, theaterDto);
+	}
+	
+	@PostMapping("/add-theater")
+	public String addTheater(@Valid TheaterDto theaterDto,BindingResult result,RedirectAttributes attributes,HttpSession session) throws IOException {
+		return userService.addTheater(session, attributes, theaterDto,result);
 	}
 }

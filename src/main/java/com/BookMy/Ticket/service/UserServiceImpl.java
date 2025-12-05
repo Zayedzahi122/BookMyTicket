@@ -1,20 +1,27 @@
 package com.BookMy.Ticket.service;
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.BookMy.Ticket.dto.LoginDto;
 import com.BookMy.Ticket.dto.PasswordDto;
+import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
+import com.BookMy.Ticket.entity.Theater;
 import com.BookMy.Ticket.entity.User;
+import com.BookMy.Ticket.repository.TheaterRepository;
 import com.BookMy.Ticket.repository.UserRepository;
 import com.BookMy.Ticket.util.AES;
 import com.BookMy.Ticket.util.EmailHelper;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
@@ -23,6 +30,7 @@ public class UserServiceImpl implements UserService {
 	private final SecureRandom random;
 	private final EmailHelper emailHelper;
 	private final RedisService redisService;
+	private final TheaterRepository theaterRepository;
 	
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
@@ -229,5 +237,71 @@ public class UserServiceImpl implements UserService {
 	private User getUserFromSession(HttpSession session) {
 		return (User) session.getAttribute("user");
 	}
-	
+	@Override
+	public String manageTheater(ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			List<Theater> theaters = theaterRepository.findAll();
+			map.put("theaters", theaters);
+			return "manage-theaters.html";
+		}
+	}
+
+	@Override
+	public String loadAddTheater(HttpSession session, RedirectAttributes attributes, TheaterDto theaterDto) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			return "add-theater.html";
+		}
+	}
+
+	@Override
+	public String addTheater(HttpSession session, RedirectAttributes attributes, @Valid TheaterDto theaterDto,
+			BindingResult result) throws IOException {
+
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+
+		if (theaterRepository.existsByNameAndAddress(theaterDto.getName(), theaterDto.getAddress())) {
+			result.rejectValue("name", "error.name", "* Theater Already Exists");
+		}
+
+		MultipartFile image = theaterDto.getImage();
+		if (image.isEmpty()) {
+			result.rejectValue("image", "error.image", "* Image is Required");
+		}
+
+		if (result.hasErrors()) {
+			return "add-theater.html";
+		}
+
+		String baseUploadDir = System.getProperty("user.dir") + "/uploads/theaters/";
+		File directory = new File(baseUploadDir);
+		if (!directory.exists())
+			directory.mkdirs();
+
+		String filename = theaterDto.getName() + image.getOriginalFilename();
+		File destination = new File(directory, filename);
+		image.transferTo(destination);
+
+		Theater theater = new Theater();
+		theater.setName(theaterDto.getName());
+		theater.setAddress(theaterDto.getAddress());
+		theater.setLocationLink(theaterDto.getLocationLink());
+		theater.setImageLocation("/uploads/theaters/" + filename);
+
+		theaterRepository.save(theater);
+
+		attributes.addFlashAttribute("pass", "Theater Added Successfully");
+		return "redirect:/manage-theaters";
+	}
 }
