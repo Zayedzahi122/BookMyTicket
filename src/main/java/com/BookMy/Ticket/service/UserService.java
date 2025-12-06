@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.BookMy.Ticket.dto.LoginDto;
 import com.BookMy.Ticket.dto.PasswordDto;
+import com.BookMy.Ticket.dto.ScreenDto;
 import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
 
@@ -47,5 +48,17 @@ public interface UserService {
 	String addTheater(HttpSession session, RedirectAttributes attributes, @Valid TheaterDto theaterDto,
 			BindingResult result) throws IOException;
 
+	String deleteTheater(Long id, HttpSession session, RedirectAttributes attributes);
+
+	String editTheater(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
+
+	String updateTheater(HttpSession session, RedirectAttributes attributes, @Valid TheaterDto theaterDto,
+			BindingResult result, Long id);
+
+	String manageScreens(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
+	
+	String addScreen(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map, ScreenDto screenDto);
+
+	String addScreen(ScreenDto screenDto,BindingResult result, HttpSession session, RedirectAttributes attributes);
 	
 }
