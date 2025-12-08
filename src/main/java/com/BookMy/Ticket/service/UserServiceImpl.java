@@ -15,6 +15,7 @@ import com.BookMy.Ticket.dto.ScreenDto;
 import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
 import com.BookMy.Ticket.entity.Screen;
+import com.BookMy.Ticket.entity.Seat;
 import com.BookMy.Ticket.entity.Theater;
 import com.BookMy.Ticket.entity.User;
 import com.BookMy.Ticket.repository.ScreenRepository;
@@ -433,4 +434,85 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 	}
+
+	@Override
+	public String deleteScreen(Long id, HttpSession session, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			Theater theater = screen.getTheater();
+			theater.setScreenCount(theater.getScreenCount() - 1);
+			theaterRepository.save(theater);
+			screenRepository.deleteById(id);
+			attributes.addFlashAttribute("pass", "Screen Removed Success");
+			return "redirect:/manage-screens/" + theater.getId();
+		}
+	}
+
+	@Override
+	public String editScreen(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			ScreenDto screenDto = new ScreenDto(screen.getName(), screen.getType(), screen.getTheater().getId());
+			map.put("screenDto", screenDto);
+			map.put("id", screen.getId());
+			return "edit-screen.html";
+		}
+	}
+
+	@Override
+	public String updateScreen(@Valid ScreenDto screenDto, Long id, BindingResult result, HttpSession session,
+			RedirectAttributes attributes, ModelMap map) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			if (result.hasErrors()) {
+				map.put("id", id);
+				return "edit-screen.html";
+			}
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			screen.setName(screenDto.getName());
+			screen.setType(screenDto.getType());
+			screenRepository.save(screen);
+			attributes.addFlashAttribute("pass", "Screen Updated Success");
+			return "redirect:/manage-screens/" + screen.getTheater().getId();
+		}
+	}
+	@Override
+	public String manageSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Seat> seats = screen.getSeats();
+			map.put("seats", seats);
+			map.put("screenId", id);
+			return "manage-seats.html";
+		}
+	}
+
+	@Override
+	public String addSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			map.put("id", id);
+			return "add-seats.html";
+		}
+	}	
 }
+
