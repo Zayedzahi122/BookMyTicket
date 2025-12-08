@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang ="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Edit Screen - BookMyTicket Admin</title>
+	<title>Add Screen - BookMyTicket Admin</title>
 
 	<!-- Bootstrap -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -242,12 +242,11 @@
 	<div class="form-container">
 		<div class="form-box">
 
-			<h2>✏️ Edit Screen</h2>
+			<h2>🎬 Add Screen</h2>
 
-			<form action="/update-screen" method="post" th:object="${screenDto}">
+			<form action="/add-screen" method="post" th:object="${screenDto}">
 
 				<input type="hidden" th:field="*{theaterId}">
-				<input type="hidden" name="id" th:value="${id}">
 
 				<div class="form-group">
 					<label for="name">Screen Name</label>
@@ -261,7 +260,7 @@
 					<div class="error-text" th:errors="*{type}"></div>
 				</div>
 
-				<button type="submit" class="btn-submit">Update Screen</button>
+				<button type="submit" class="btn-submit">Add Screen</button>
 
 				<div class="back-link">
 					<a href="/manage-theaters">← Back to Theaters</a>
