@@ -18,7 +18,7 @@ public class EmailHelper {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 		try {
-		helper.setFrom("bookmy-ticket.com", "Book-My-Ticket");
+		helper.setFrom("zayedzahi122@gmail.com", "Book-My-Ticket");
 		helper.setTo(email);
 		helper.setSubject("Otp for Creating Account with BookMyTicket");
 		Context context = new Context();
@@ -28,6 +28,7 @@ public class EmailHelper {
 		helper.setText(text, true);
 		mailSender.send(mimeMessage);
 		}catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Failed to Send OTP : "+otp);	
 			
 		}
