@@ -15,6 +15,7 @@ import com.BookMy.Ticket.dto.LoginDto;
 import com.BookMy.Ticket.dto.MovieDto;
 import com.BookMy.Ticket.dto.PasswordDto;
 import com.BookMy.Ticket.dto.ScreenDto;
+import com.BookMy.Ticket.dto.SeatLayoutForm;
 import com.BookMy.Ticket.dto.UserDto;
 import com.BookMy.Ticket.service.UserService;
 
@@ -176,6 +177,10 @@ return "main.html";
 	@GetMapping("/add-seats/{id}")
 	public String addSeats(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
 		return userService.addSeats(id, session, map, attributes);
+	}
+	@PostMapping("/add-seats/{id}")
+	public String saveSeats(@PathVariable Long id,SeatLayoutForm seatLayoutForm, HttpSession session,RedirectAttributes attributes) {
+	    return userService.saveSeats(id, seatLayoutForm, session, attributes);
 	}
 	@GetMapping("/manage-movies")
 	public String manageMovies(HttpSession session, RedirectAttributes attributes, ModelMap map) {

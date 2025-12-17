@@ -10,6 +10,7 @@ import com.BookMy.Ticket.dto.LoginDto;
 import com.BookMy.Ticket.dto.MovieDto;
 import com.BookMy.Ticket.dto.PasswordDto;
 import com.BookMy.Ticket.dto.ScreenDto;
+import com.BookMy.Ticket.dto.SeatLayoutForm;
 import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
 
@@ -78,4 +79,6 @@ public interface UserService {
 	String loadAddMovie(MovieDto movieDto, RedirectAttributes attributes, HttpSession session);
 
 	String addMovie(@Valid MovieDto movieDto, BindingResult result, RedirectAttributes attributes, HttpSession session);
+	
+	String saveSeats(Long id, SeatLayoutForm seatLayoutForm, HttpSession session, RedirectAttributes attributes);
 }
