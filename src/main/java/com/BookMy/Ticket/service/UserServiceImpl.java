@@ -1,13 +1,15 @@
 package com.BookMy.Ticket.service;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -43,10 +45,12 @@ import com.BookMy.Ticket.util.EmailHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	private final UserRepository userRepository ;
+
+	private final UserRepository userRepository;
 	private final SecureRandom random;
 	private final EmailHelper emailHelper;
 	private final RedisService redisService;
@@ -56,6 +60,7 @@ public class UserServiceImpl implements UserService {
 	private final CloudinaryHelper cloudinaryHelper;
 	private final SeatRepository seatRepository;
 	private final ShowRepository showRepository;
+
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
 		if (!userDto.getPassword().equals(userDto.getConfirmPassword()))
