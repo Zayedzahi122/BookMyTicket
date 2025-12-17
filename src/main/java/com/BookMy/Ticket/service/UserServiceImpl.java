@@ -1,4 +1,5 @@
 package com.BookMy.Ticket.service;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import java.util.List;
@@ -19,16 +20,20 @@ import com.BookMy.Ticket.dto.PasswordDto;
 import com.BookMy.Ticket.dto.ScreenDto;
 import com.BookMy.Ticket.dto.SeatLayoutForm;
 import com.BookMy.Ticket.dto.SeatRowDto;
+import com.BookMy.Ticket.dto.ShowDto;
 import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
 import com.BookMy.Ticket.entity.Movie;
 import com.BookMy.Ticket.entity.Screen;
 import com.BookMy.Ticket.entity.Seat;
+import com.BookMy.Ticket.entity.Show;
+import com.BookMy.Ticket.entity.ShowSeat;
 import com.BookMy.Ticket.entity.Theater;
 import com.BookMy.Ticket.entity.User;
 import com.BookMy.Ticket.repository.MovieRepository;
 import com.BookMy.Ticket.repository.ScreenRepository;
 import com.BookMy.Ticket.repository.SeatRepository;
+import com.BookMy.Ticket.repository.ShowRepository;
 import com.BookMy.Ticket.repository.TheaterRepository;
 import com.BookMy.Ticket.repository.UserRepository;
 import com.BookMy.Ticket.util.AES;
@@ -50,6 +55,7 @@ public class UserServiceImpl implements UserService {
 	private final MovieRepository movieRepository;
 	private final CloudinaryHelper cloudinaryHelper;
 	private final SeatRepository seatRepository;
+	private final ShowRepository showRepository;
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
 		if (!userDto.getPassword().equals(userDto.getConfirmPassword()))
@@ -59,9 +65,10 @@ public class UserServiceImpl implements UserService {
 			result.rejectValue("email", "error.email", "* Email Should be unique");
 		if (userRepository.existsByMobile(userDto.getMobile()))
 			result.rejectValue("mobile", "error.mobile", "* Mobile Number Should be unique");
-		
+
 		if (result.hasErrors())
 			return "register.html";
+
 		else {
 			int otp = random.nextInt(100000, 1000000);
 			emailHelper.sendOtp(otp, userDto.getName(), userDto.getEmail());
@@ -81,7 +88,7 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/login";
 		} else {
 			if (AES.decrypt(user.getPassword()).equals(dto.getPassword())) {
-				if(user.isBlocked()) {
+				if (user.isBlocked()) {
 					attributes.addFlashAttribute("fail", "Account Blocked!, Contact Admin");
 					return "redirect:/login";
 				}
@@ -101,7 +108,6 @@ public class UserServiceImpl implements UserService {
 		attributes.addFlashAttribute("pass", "Logout Success");
 		return "redirect:/main";
 	}
-
 
 	@Override
 	public String submitOtp(int otp, String email, RedirectAttributes attributes) {
@@ -131,6 +137,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 	}
+
 	@Override
 	public String resendOtp(String email, RedirectAttributes attributes) {
 		UserDto dto = redisService.getDtoByEmail(email);
@@ -196,6 +203,7 @@ public class UserServiceImpl implements UserService {
 
 		}
 	}
+
 	@Override
 	public String manageUsers(HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		User user = getUserFromSession(session);
@@ -232,7 +240,7 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/manage-users";
 		}
 	}
-	
+
 	@Override
 	public String unBlockUser(Long id, HttpSession session, RedirectAttributes attributes) {
 		User user = getUserFromSession(session);
@@ -255,6 +263,7 @@ public class UserServiceImpl implements UserService {
 	private User getUserFromSession(HttpSession session) {
 		return (User) session.getAttribute("user");
 	}
+
 	@Override
 	public String manageTheater(ModelMap map, RedirectAttributes attributes, HttpSession session) {
 		User user = getUserFromSession(session);
@@ -302,7 +311,6 @@ public class UserServiceImpl implements UserService {
 			return "add-theater.html";
 		}
 
-		
 		Theater theater = new Theater();
 		theater.setName(theaterDto.getName());
 		theater.setAddress(theaterDto.getAddress());
@@ -314,6 +322,7 @@ public class UserServiceImpl implements UserService {
 		attributes.addFlashAttribute("pass", "Theater Added Successfully");
 		return "redirect:/manage-theaters";
 	}
+
 	@Override
 	public String deleteTheater(Long id, HttpSession session, RedirectAttributes attributes) {
 		User user = getUserFromSession(session);
@@ -498,24 +507,29 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/manage-screens/" + screen.getTheater().getId();
 		}
 	}
+
 	@Override
 	public String manageSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+
 		User user = getUserFromSession(session);
 		if (user == null || !user.getRole().equals("ADMIN")) {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		}
-			Screen screen = screenRepository.findById(id).orElseThrow(() -> new RuntimeException("Screen not found"));
-			List<Seat> seats = seatRepository.findByScreenOrderBySeatRowAscSeatColumnAsc(screen);
-			
-			// Group seats by row
-			Map<String, List<Seat>> seatsByRow = seats.stream()
-					.collect(Collectors.groupingBy(Seat::getSeatRow, LinkedHashMap::new, Collectors.toList()));
-			map.put("seatsByRow", seatsByRow);
-			map.put("screenId", id);
-			return "manage-seats";
-		}
-	
+
+		Screen screen = screenRepository.findById(id).orElseThrow(() -> new RuntimeException("Screen not found"));
+
+		List<Seat> seats = seatRepository.findByScreenOrderBySeatRowAscSeatColumnAsc(screen);
+
+		// Group seats by row
+		Map<String, List<Seat>> seatsByRow = seats.stream()
+				.collect(Collectors.groupingBy(Seat::getSeatRow, LinkedHashMap::new, Collectors.toList()));
+
+		map.put("seatsByRow", seatsByRow);
+		map.put("screenId", id);
+
+		return "manage-seats";
+	}
 
 	@Override
 	public String addSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
@@ -530,28 +544,36 @@ public class UserServiceImpl implements UserService {
 			return "add-seats.html";
 		}
 	}
+
 	@Override
 	public String saveSeats(Long screenId, SeatLayoutForm form, HttpSession session, RedirectAttributes attributes) {
+
 		User user = getUserFromSession(session);
 		if (user == null || !user.getRole().equals("ADMIN")) {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		}
+
 		Screen screen = screenRepository.findById(screenId).orElseThrow();
+
 		for (SeatRowDto row : form.getRows()) {
 			for (int i = 1; i <= row.getTotalSeats(); i++) {
+
 				Seat seat = new Seat();
 				seat.setScreen(screen);
 				seat.setSeatRow(row.getRowName());
 				seat.setSeatColumn(i);
 				seat.setSeatNumber(row.getRowName() + i);
 				seat.setCategory(row.getCategory());
+
 				seatRepository.save(seat);
 			}
 		}
+
 		attributes.addFlashAttribute("success", "Seats added successfully");
 		return "redirect:/manage-screens/" + screen.getTheater().getId();
 	}
+
 	@Override
 	public String manageMovies(HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		User user = getUserFromSession(session);
@@ -603,9 +625,92 @@ public class UserServiceImpl implements UserService {
 
 		}
 	}
+
+	@Override
+	public String manageShows(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Show> shows = showRepository.findByScreen(screen);
+			map.put("shows", shows);
+			map.put("id", id);
+			return "manage-shows";
+		}
+	}
+
+	@Override
+	public String addShow(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Movie> movies = movieRepository.findAll();
+			map.put("movies", movies);
+			ShowDto showDto = new ShowDto();
+			showDto.setScreenId(screen.getId());
+			map.put("showDto", showDto);
+			return "add-show";
+		}
+	}
+
+	@Override
+	public String addShow(ShowDto showDto, BindingResult result, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Movie movie = movieRepository.findById(showDto.getMovieId()).orElseThrow();
+			Screen screen = screenRepository.findById(showDto.getScreenId()).orElseThrow();
+			if (showDto.getShowDate().isBefore(movie.getReleaseDate()))
+				result.rejectValue("showDate", "error.showDate", "* Show Date Should be After Movie Release");
+
+			List<Show> shows = showRepository.findByScreen(screen);
+			if (!shows.isEmpty()) {
+				boolean flag = false;
+				for (Show show : shows) {
+					if (showDto.getStartTime().isBefore(show.getEndTime())) {
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					result.rejectValue("startTime", "error.startTime", "* In Same Time There is One More Show");
+			}
+
+			if (result.hasErrors()) {
+				return "add-show";
+			} else {
+				Show show = new Show();
+				show.setMovie(movie);
+				show.setScreen(screen);
+				show.setShowDate(showDto.getShowDate());
+				show.setStartTime(showDto.getStartTime());
+				show.setTicketPrice(showDto.getTicketPrice());
+				show.setEndTime(show.getStartTime().plusHours(movie.getDuration().getHour())
+						.plusMinutes(movie.getDuration().getMinute() + 30));
+
+				List<ShowSeat> seats = new ArrayList<ShowSeat>();
+
+				List<Seat> exSeats = seatRepository.findByScreenOrderBySeatRowAscSeatColumnAsc(screen);
+				for (Seat seat : exSeats) {
+					ShowSeat showSeat = new ShowSeat();
+					showSeat.setBooked(false);
+					showSeat.setSeat(seat);
+				}
+
+				show.setSeats(seats);
+				showRepository.save(show);
+				attributes.addFlashAttribute("pass", "Show Added Success");
+				return "redirect:/manage-shows/" + showDto.getScreenId();
+			}
+
+		}
+	}
+
 }
-
-
-
-
-
