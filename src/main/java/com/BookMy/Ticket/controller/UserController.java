@@ -212,7 +212,7 @@ return "main.html";
 
 	@PostMapping("/add-show")
 	public String addShow(@Valid ShowDto showDto, BindingResult result, RedirectAttributes attributes,
-			HttpSession session) {
-		return userService.addShow(showDto, result, attributes, session);
+			HttpSession session,ModelMap map) {
+		return userService.addShow(showDto, result, attributes, session,map);
 	}
 }
