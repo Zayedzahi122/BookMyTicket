@@ -488,8 +488,7 @@
 			<div th:if="${session.user != null}" class="d-flex align-items-center">
 				<span class="text-white me-3 fw-semibold" th:text="'Hello, ' + ${session.user.name}"></span> <a
 					th:if="${session.user.role=='USER'}" href="/bookings" class="btn btn-outline-light me-2">My
-					Bookings</a> <a th:if="${session.user.role=='USER'}" href="/movies"
-					class="btn btn-outline-light me-2">Movies</a> <a th:if="${session.user.role=='ADMIN'}"
+					Bookings</a> <a th:if="${session.user.role=='ADMIN'}"
 					href="/manage-movies" class="btn btn-danger me-2">Manage Movies</a> <a
 					th:if="${session.user.role=='ADMIN'}" href="/manage-theaters" class="btn btn-danger me-2">Manage
 					Theaters</a> <a th:if="${session.user.role=='ADMIN'}" href="/manage-users"
@@ -523,151 +522,22 @@
 
 
 	<!-- MOVIES -->
-	<section class="container" id="movies">
+	<section class="container" id="movies" th:if="${!movies.isEmpty()}">
 		<h2 class="text-center fw-bold mb-5">Now Showing</h2>
 
 		<div class="row g-4">
 
-			<!-- Avengers -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card ">
-					<img src="https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg">
-						
+			<div class="col-lg-3 col-md-4 col-sm-6" th:each="movie:${movies}">
+				<div class="movie-card">
+					<img th:src="${movie.imageLink}">
 					<div class="card-body">
-						<p class="card-title">2019</p>
-						<h5 class="fw-semibold">Avengers: Endgame</h5>
-						<p class="text-muted small">Action • 3h 1m</p>
-						<a href="/movie/1" class="btn btn-primary w-100">Book Now</a>
+						<h5 class="fw-semibold" th:text="${movie.name}"></h5>
+						<p class="text-muted small"><span th:text="${movie.genre}"></span> • <span th:text="${movie.duration}"></span> hours </p>
+						<a href="" class="btn btn-primary w-100">Book Now</a>
 					</div>
 				</div>
 			</div>
 
-			<!-- Interstellar -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://m.media-amazon.com/images/I/91NC2t4Hd2L._AC_UF1000,1000_QL80_.jpg"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2014</p>
-						<h5 class="fw-semibold">Interstellar</h5>
-						<p class="text-muted small">Sci-Fi • 2h 49m</p>
-						<a href="/movie/2" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-
-			<!-- Inception -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://m.media-amazon.com/images/M/MV5BZjhkNjM0ZTMtNGM5MC00ZTQ3LTk3YmYtZTkzYzdiNWE0ZTA2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2010</p>
-						<h5 class="fw-semibold">Inception</h5>
-						<p class="text-muted small">Thriller • 2h 28m</p>
-						<a href="/movie/3" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-
-			<!-- Joker -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://cdn.kinocheck.com/i/dmyydz3tm2.jpg"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2019</p>
-						<h5 class="fw-semibold">Joker</h5>
-						<p class="text-muted small">Drama • 2h 2m</p>
-							<a href="/movie/4" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- Eko -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://assets-in.bmscdn.com/iedb/movies/images/mobile/listing/medium/eko-et00470809-1763016041.jpg"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2025</p>
-						<h5 class="fw-semibold">Eko</h5>
-						<p class="text-muted small">Drama/Mystery • 2h 7m</p>
-						<a href="/movie/5" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- lokah -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://m.media-amazon.com/images/M/MV5BNWFkMGFmNTQtOTUwYS00NDFkLWFkNDAtZjA4ODliYTc2MmFmXkEyXkFqcGc@._V1_.jpg"
-						class="card-img-top">
-					<div class="card-body">
-					    <p class="card-title">2025</p>
-						<h5 class="fw-semibold">lokah chapter 1: chandra</h5>
-						<p class="text-muted small">Fantasy • 2h 31m</p>
-						<a href="/movie/6" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- Bison Kaalamaadan -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQftsWMvKdNonqQQdaO1H9_W5LxQXuPrXqLVo5JYzrZetklqTGuPlf4DvsUKhk1utx4xRAH9w&s=10"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2025</p>
-						<h5 class="fw-semibold">Bison Kaalamaadan</h5>
-						<p class="text-muted small"> Adventure • 2h 30m</p>
-						<a href="/movie/7" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- Dude -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ75SvPXTqLZZfPjt9jGHYfJKgTX2_QnPa71jk3wGFQHCfOxCH-lJl0ORjjZt-4Y0Iw4oiL&s=10"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2025</p>
-						<h5 class="fw-semibold">Dude</h5>
-						<p class="text-muted small">Comedy/Adventure • 2h 20m</p>
-						<a href="/movie/8" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- The Fantastic Four -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLJBESuOsvi8aWujZZXsZwlvl2D-h_6LA9NCDzQ82PJqmAZLPoOxS2rmIJ0RLJXAxQjricGw&s=10"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2025</p>
-						<h5 class="fw-semibold">The Fantastic Four: First Steps</h5>
-						<p class="text-muted small">Action/Sci-fi • 1h 55m</p>
-						<a href="/movie/9" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
-			<!-- TERE ISHK MEIN -->
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<div class="movie-card">
-					<img src="https://m.media-amazon.com/images/M/MV5BOGRjMzM1ZmUtMjk0Yi00NzA0LTk3ZWYtZWM3MWY3M2EwMjBhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
-						class="card-img-top">
-					<div class="card-body">
-						<p class="card-title">2025</p>
-						<h5 class="fw-semibold">TERE ISHK MEIN</h5>
-						<p class="text-muted small" >Romance/Musical  • 2h 27m</p>
-						<a href="/movie/10" class="btn btn-primary w-100">Book Now</a>
-					</div>
-				</div>
-			</div>
-			
 		</div>
 	</section>
 
@@ -679,48 +549,45 @@
 
 
 	<!-- Bootstrap JS -->
-	<script 
-	
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
-	
-	</script>
-	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 	<script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const toasts = document.querySelectorAll('.toastify');
+		document.addEventListener("DOMContentLoaded", () => {
+			const toasts = document.querySelectorAll('.toastify');
 
-		toasts.forEach(toastElement => {
-			// Create close button
-			const closeBtn = document.createElement('button');
-			closeBtn.className = 'toastify-close';
-			closeBtn.innerHTML = '×';
-			closeBtn.type = 'button';
+			toasts.forEach(toastElement => {
+				// Create close button
+				const closeBtn = document.createElement('button');
+				closeBtn.className = 'toastify-close';
+				closeBtn.innerHTML = '×';
+				closeBtn.type = 'button';
 
-			// Insert close button before span
-			const spanElement = toastElement.querySelector('span');
-			if (spanElement) {
-				toastElement.insertBefore(closeBtn, spanElement.nextSibling);
-			}
+				// Insert close button before span
+				const spanElement = toastElement.querySelector('span');
+				if (spanElement) {
+					toastElement.insertBefore(closeBtn, spanElement.nextSibling);
+				}
 
-			// Close button click handler
-			closeBtn.addEventListener('click', () => {
-				toastElement.style.animation = 'toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-				setTimeout(() => toastElement.remove(), 400);
-			});
-
-			// Auto remove after 3.5 seconds
-			const timeout = setTimeout(() => {
-				if (document.body.contains(toastElement)) {
+				// Close button click handler
+				closeBtn.addEventListener('click', () => {
 					toastElement.style.animation = 'toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
 					setTimeout(() => toastElement.remove(), 400);
-				}
-			}, 3500);
+				});
 
-			// Clear timeout if closed manually
-			closeBtn.addEventListener('click', () => clearTimeout(timeout));
+				// Auto remove after 3.5 seconds
+				const timeout = setTimeout(() => {
+					if (document.body.contains(toastElement)) {
+						toastElement.style.animation = 'toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+						setTimeout(() => toastElement.remove(), 400);
+					}
+				}, 3500);
+
+				// Clear timeout if closed manually
+				closeBtn.addEventListener('click', () => clearTimeout(timeout));
+			});
 		});
-	});
-</script>
+	</script>
 
 </body>
+
 </html>

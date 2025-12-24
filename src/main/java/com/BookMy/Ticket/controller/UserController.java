@@ -30,10 +30,10 @@ public class UserController {
 
 	private final UserService userService;
 
-@GetMapping({"/", "/main" })
-public String loadMain() {
-return "main.html";
-}
+	@GetMapping({ "/", "/main" })
+	public String loadMain(ModelMap map) {
+		return userService.loadMain(map);
+	}
 
 	@GetMapping("/register")
 	public String loadRegister(UserDto userDto) {
@@ -49,15 +49,17 @@ return "main.html";
 	public String loadLogin() {
 		return "login.html";
 	}
-	
+
 	@PostMapping("/login")
 	public String login(LoginDto dto, RedirectAttributes attributes, HttpSession session) {
 		return userService.login(dto, attributes, session);
 	}
+
 	@GetMapping("/logout")
 	public String logout(HttpSession session, RedirectAttributes attributes) {
 		return userService.logout(session, attributes);
 	}
+
 	@GetMapping("/otp")
 	public String loadOtpPage() {
 		return "otp.html";
@@ -67,6 +69,7 @@ return "main.html";
 	public String submitOtp(@RequestParam int otp, @RequestParam String email, RedirectAttributes attributes) {
 		return userService.submitOtp(otp, email, attributes);
 	}
+
 	@GetMapping("/resend-otp/{email}")
 	public String resendOtp(@PathVariable String email, RedirectAttributes attributes) {
 		return userService.resendOtp(email, attributes);
@@ -92,15 +95,17 @@ return "main.html";
 			RedirectAttributes attributes) {
 		return userService.resetPassword(passwordDto, result, attributes, map);
 	}
+
 	@GetMapping("/manage-users")
 	public String viewUsers(HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		return userService.manageUsers(session, attributes, map);
 	}
-	
+
 	@GetMapping("/block/{id}")
 	public String block(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
 		return userService.blockUser(id, session, attributes);
 	}
+
 	@GetMapping("/un-block/{id}")
 	public String unBlock(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
 		return userService.unBlockUser(id, session, attributes);
@@ -115,7 +120,7 @@ return "main.html";
 	public String addTheater(TheaterDto theaterDto, RedirectAttributes attributes, HttpSession session) {
 		return userService.loadAddTheater(session, attributes, theaterDto);
 	}
-	
+
 	@PostMapping("/add-theater")
 	public String addTheater(@Valid TheaterDto theaterDto, BindingResult result, RedirectAttributes attributes,
 			HttpSession session) throws IOException {
@@ -155,6 +160,7 @@ return "main.html";
 			RedirectAttributes attributes) {
 		return userService.addScreen(screenDto, result, session, attributes);
 	}
+
 	@GetMapping("/delete-screen/{id}")
 	public String deleteScreen(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
 		return userService.deleteScreen(id, session, attributes);
@@ -170,20 +176,23 @@ return "main.html";
 			RedirectAttributes attributes, HttpSession session) {
 		return userService.updateScreen(screenDto, id, result, session, attributes, map);
 	}
+
 	@GetMapping("/manage-seats/{id}")
 	public String manageSeats(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
 		return userService.manageSeats(id, session, map, attributes);
 	}
-	
+
 	@GetMapping("/add-seats/{id}")
 	public String addSeats(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
 		return userService.addSeats(id, session, map, attributes);
 	}
+
 	@PostMapping("/add-seats/{id}")
 	public String saveSeats(@PathVariable Long id, SeatLayoutForm seatLayoutForm, HttpSession session,
 			RedirectAttributes attributes) {
 		return userService.saveSeats(id, seatLayoutForm, session, attributes);
 	}
+
 	@GetMapping("/manage-movies")
 	public String manageMovies(HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		return userService.manageMovies(session, attributes, map);
@@ -212,7 +221,11 @@ return "main.html";
 
 	@PostMapping("/add-show")
 	public String addShow(@Valid ShowDto showDto, BindingResult result, RedirectAttributes attributes,
-			HttpSession session,ModelMap map) {
-		return userService.addShow(showDto, result, attributes, session,map);
+			HttpSession session, ModelMap map) {
+		return userService.addShow(showDto, result, attributes, session, map);
 	}
-}
+	@GetMapping("/book/movie/{id}")
+	public String bookMovie(@PathVariable Long id, HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		return userService.bookMovie(id, session, attributes, map);
+    }
+   }
