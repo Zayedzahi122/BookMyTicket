@@ -124,6 +124,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 <artifactId>spring-boot-starter-webmvc-test</artifactId>
 <scope>test</scope>
 </dependency>
+	<dependency>
+    <groupId>com.razorpay</groupId>
+    <artifactId>razorpay-java</artifactId>
+    <version>1.4.8</version>
+</dependency>
+<dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>3.5.3</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>javase</artifactId>
+        <version>3.5.3</version>
+    </dependency>
 </dependencies>
 
 <build>

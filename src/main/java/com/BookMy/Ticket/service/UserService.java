@@ -15,6 +15,8 @@ import com.BookMy.Ticket.dto.SeatLayoutForm;
 import com.BookMy.Ticket.dto.ShowDto;
 import com.BookMy.Ticket.dto.TheaterDto;
 import com.BookMy.Ticket.dto.UserDto;
+import com.google.zxing.WriterException;
+import com.razorpay.RazorpayException;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -103,8 +105,10 @@ public interface UserService {
 	String showSeats(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
 
 	String confirmBooking(Long showId, Long[] seatIds, HttpSession session, ModelMap map,
-			RedirectAttributes attributes);
- 
+			RedirectAttributes attributes) throws RazorpayException;
+
+	String confirmTicket(HttpSession session, ModelMap map, RedirectAttributes attributes, String razorpay_order_id,
+			String razorpay_payment_id) throws IOException, WriterException;
 	
 	
 }

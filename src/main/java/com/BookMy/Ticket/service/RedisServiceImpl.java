@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.BookMy.Ticket.dto.UserDto;
-
+import com.BookMy.Ticket.entity.BookedTicket;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -29,7 +29,6 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	
 	public UserDto getDtoByEmail(String email) {
 		return (UserDto) redisTemplate.opsForValue().get("dto-" + email);
 	}
@@ -42,6 +41,15 @@ public class RedisServiceImpl implements RedisService {
 		else
 			return (int) otp;
 	}
-	 
-	
+
+	@Override
+	public void saveTicket(String id, BookedTicket ticket) {
+		redisTemplate.opsForValue().set(id, ticket, Duration.ofMinutes(15));
+	}
+
+	@Override
+	public BookedTicket getTicket(String razorpay_order_id) {
+		return (BookedTicket) redisTemplate.opsForValue().get(razorpay_order_id);
+	}
+
 }

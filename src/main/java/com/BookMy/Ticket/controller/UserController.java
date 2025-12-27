@@ -20,6 +20,8 @@ import com.BookMy.Ticket.dto.SeatLayoutForm;
 import com.BookMy.Ticket.dto.ShowDto;
 import com.BookMy.Ticket.dto.UserDto;
 import com.BookMy.Ticket.service.UserService;
+import com.google.zxing.WriterException;
+import com.razorpay.RazorpayException;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -209,11 +211,11 @@ public class UserController {
 			HttpSession session) {
 		return userService.addMovie(movieDto, result, attributes, session);
 	}
+
 	@GetMapping("/delete-movie/{id}")
 	public String deleteMovie(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
 		return userService.deleteMovie(id, session, attributes);
 	}
-
 
 	@GetMapping("/manage-shows/{id}")
 	public String manageShows(@PathVariable Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
@@ -230,14 +232,17 @@ public class UserController {
 			HttpSession session, ModelMap map) {
 		return userService.addShow(showDto, result, attributes, session, map);
 	}
+
 	@GetMapping("/book/movie/{id}")
 	public String bookMovie(@PathVariable Long id, HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		return userService.bookMovie(id, session, attributes, map);
-    }
+	}
+
 	@GetMapping("/delete-show/{id}")
 	public String deleteShow(@PathVariable Long id, RedirectAttributes attributes, HttpSession session) {
 		return userService.deleteShow(id, session, attributes);
 	}
+
 	@GetMapping("/selectShows")
 	public String displayShows(@RequestParam Long movieId, @RequestParam LocalDate date, RedirectAttributes attributes,
 			ModelMap map) {
@@ -251,7 +256,14 @@ public class UserController {
 
 	@PostMapping("/confirm-booking")
 	public String confirmBooking(@RequestParam Long showId, @RequestParam Long[] seatIds, HttpSession session,
-			ModelMap map, RedirectAttributes attributes) {
+			ModelMap map, RedirectAttributes attributes) throws RazorpayException {
 		return userService.confirmBooking(showId, seatIds, session, map, attributes);
 	}
+
+	@PostMapping("/confirm-ticket")
+	public String confirmTicket(HttpSession session, ModelMap map, RedirectAttributes attributes,
+			@RequestParam String razorpay_payment_id, @RequestParam String razorpay_order_id) throws IOException, WriterException {
+		return userService.confirmTicket(session, map, attributes, razorpay_order_id, razorpay_payment_id);
+	}
+
    }
